@@ -1,0 +1,203 @@
+openapi: 3.0.3
+info:
+  title: User swagger
+  description: Описание сервиса создания, обновления, получение, данных о 3D моделях
+  version: 0.0.1
+servers:
+  - url: /api/v1
+paths:
+  /figurine/{figurineId}:
+    get:
+      operationId: getFigurine
+      parameters:
+        - name: figurineId
+          description: Id фигуры
+          in: path
+          schema:
+            type: string
+            format: uuid
+          required: true
+          example: 86f85e4a-0354-4121-9491-51cc1fae14e1
+      summary: Метод получения подробных данных о фигуре
+      tags:
+        - figurineService
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Figurine'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      operationId: updateFigurine
+      parameters:
+        - name: figurineId
+          description: Id фигуры
+          in: path
+          schema:
+            type: string
+            format: uuid
+          required: true
+          example: 86f85e4a-0354-4121-9491-51cc1fae14e1
+      summary: Метод обновления данных фигуры
+      tags:
+        - figurineService
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Figurine'
+      responses:
+        '200':
+          description: Success
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /figurine:
+    post:
+      operationId: createUser
+      summary: Метод создания фигуры
+      tags:
+        - figurineService
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Figurine'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Figurine'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /fogurine/find:
+    post:
+      operationId: getFogurines
+      summary: Метод получение всех фигурок
+      tags:
+        - figurineService
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FindFigurinesRequest'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShortFigurine'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+components:
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorDescription'
+    NotFound:
+      description: The specified resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorDescription'
+  schemas:
+    ErrorDescription:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+    Figurine:
+      description: Информация о фигурке
+      type: object
+      required:
+        - fullName
+        - email
+        - permission
+        - status
+      properties:
+        name:
+          description: Название фигурки
+          type: string
+          example: username@mail.ru
+        price:
+          description: Цена фигурки
+          type: integer
+          example: 200
+        tags:
+          description: Теги
+          items:
+            type: string
+            format: string
+            example: Warhamer
+    ShortFigurine:
+      description: Информация о фигурке
+      type: object
+      required:
+        - fullName
+        - email
+        - permission
+        - status
+      properties:
+        name:
+          description: Название фигурки
+          type: string
+          example: username@mail.ru
+        price:
+          description: Цена фигурки
+          type: integer
+          example: 200
+        tags:
+          description: Теги
+          items:
+            type: string
+            format: string
+            example: '#Warhamer'
+    FindFigurinesRequest:
+      description: Параметры поиска
+      type: object
+      properties:
+        requestPreferences:
+          description: Поисковые настройки
+          type: object
+          properties:
+            page:
+              description: >-
+                Номер страницы для отображения. Поскольку все записи не
+                поместятся на фронте - следует делить результат постранично
+              x-title: Номер страницы для отображения
+              type: integer
+              example: '1'
+            recordsAmount:
+              description: Количество записей на одну страницу
+              type: integer
+              example: '20'
+            searchField:
+              description: Поле для поиска элемента
+              type: string
+              example: '#Warhamer'
+
+

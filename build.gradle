@@ -1,0 +1,80 @@
+import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
+
+plugins {
+    id "org.openapi.generator" version "6.6.0"
+    id "java"
+}
+
+group = 'com.shop.gateway'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+compileJava.options.encoding = 'UTF-8'
+compileTestJava.options.encoding = 'UTF-8'
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.9.1')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    implementation 'org.springframework.boot:spring-boot-starter-web:3.2.2'
+    implementation 'org.springframework.boot:spring-boot-starter-validation:3.2.2'
+    implementation 'io.projectreactor:reactor-tools:3.6.3'
+    implementation 'io.swagger.core.v3:swagger-annotations:2.2.20'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.16.1'
+    implementation 'org.openapitools:jackson-databind-nullable:0.2.6'
+
+}
+
+test {
+    useJUnitPlatform()
+}
+
+tasks.register('userApiGenerate', GenerateTask) {
+    group 'openapi generation'
+    generatorName = 'spring'
+    generateModelTests = false
+    generateModelDocumentation = false
+    outputDir = "$buildDir/generated"
+    inputSpec = "$rootDir/src/main/resources/spec/swagger/user/User.yaml"
+
+    configOptions = [
+            interfaceOnly: 'true',
+            reactive     : 'true',
+            dateLibrary  : 'java8',
+            useJakartaEe : 'true'
+    ]
+    modelPackage = 'ru.itone.cur.gateway.api.account.v1.json'
+    apiPackage = 'ru.itone.cur.gateway.api.account.v1'
+}
+
+tasks.register('figurineApiGenerate', GenerateTask) {
+    group 'openapi generation'
+    generatorName = 'spring'
+    generateModelTests = false
+    generateModelDocumentation = false
+    outputDir = "$buildDir/generated"
+    inputSpec = "$rootDir/src/main/resources/spec/swagger/figurine/Figurine.yaml"
+
+    configOptions = [
+            interfaceOnly: 'true',
+            reactive     : 'true',
+            dateLibrary  : 'java8',
+            useJakartaEe : 'true'
+    ]
+    modelPackage = 'ru.itone.cur.gateway.api.account.v1.json'
+    apiPackage = 'ru.itone.cur.gateway.api.account.v1'
+}
+
+
+tasks.register('apiGenerateAll') {
+    group 'openapi generation'
+    dependsOn tasks.userApiGenerate, tasks.figurineApiGenerate
+}
+
+tasks.named('compileJava') {
+    dependsOn tasks.apiGenerateAll
+}
+sourceSets.main.java.srcDirs files("$buildDir/generated/src/main/java").builtBy(apiGenerateAll)

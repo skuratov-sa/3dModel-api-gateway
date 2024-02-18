@@ -1,0 +1,138 @@
+openapi: 3.0.3
+info:
+  title: User swagger
+  description: Описание сервиса создания, обновления, получение, данных о пользователе
+  version: 0.0.1
+servers:
+  - url: /api/v1
+paths:
+  /user/{userId}:
+    get:
+      operationId: getUser
+      parameters:
+        - name: userId
+          description: Id пользователя
+          in: path
+          schema:
+            type: string
+            format: uuid
+          required: true
+          example: 86f85e4a-0354-4121-9491-51cc1fae14e1
+      summary: Метод получения данных о пользователе
+      tags:
+        - userService
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserInfo'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      operationId: updateUser
+      parameters:
+        - name: userId
+          description: Id пользователя
+          in: path
+          schema:
+            type: string
+            format: uuid
+          required: true
+          example: 86f85e4a-0354-4121-9491-51cc1fae14e1
+      summary: Метод обновления данных пользователя
+      tags:
+        - userService
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserInfo'
+      responses:
+        '200':
+          description: Success
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /user:
+    post:
+      operationId: createUser
+      summary: Метод создания пользователя
+      tags:
+        - userService
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserInfo'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserInfo'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+components:
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorDescription'
+    NotFound:
+      description: The specified resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorDescription'
+  schemas:
+    ErrorDescription:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+    UserInfo:
+      description: Информация о пользователе
+      type: object
+      required:
+        - fullName
+        - email
+        - permission
+        - status
+      properties:
+        fullName:
+          description: полное имя пользователя
+          type: string
+          example: Скуратов Станислав Александровч
+        email:
+          description: Электронная почта
+          type: string
+          example: username@mail.ru
+        permission:
+          description: Полномочия
+          type: string
+          example: Оператор Реестра УЕ.
+        status:
+          description: Статус
+          type: string
+          enum:
+            - active
+            - locked
+            - deleted
+          example: active
