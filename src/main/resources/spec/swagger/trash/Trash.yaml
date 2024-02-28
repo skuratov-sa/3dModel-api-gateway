@@ -1,12 +1,12 @@
 openapi: 3.0.3
 info:
-  title: Favorite swagger
+  title: Trash swagger
   description: Описание сервиса создания, обновления, получение, данных о 3D моделях
   version: 0.0.1
 servers:
   - url: /api/v1
 paths:
-  /favorite/{productId}:
+  /trash/{productId}:
     post:
       parameters:
         - name: productId
@@ -17,10 +17,10 @@ paths:
             format: uuid
           required: true
           example: 86f85e4a-0354-4121-9491-51cc1fae14e1
-      operationId: createFavorite
-      summary: Метод добавления фигурки в избранное
+      operationId: createTrash
+      summary: Метод добавления фигурки в корзину
       tags:
-        - favoriteService
+        - trashService
       responses:
         '200':
           description: Success
@@ -29,7 +29,7 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
     delete:
-      operationId: deleteFavorite
+      operationId: productId
       parameters:
         - name: productId
           description: Id фигуры
@@ -41,7 +41,7 @@ paths:
           example: 86f85e4a-0354-4121-9491-51cc1fae14e1
       summary: Метод удаления фигурки из избранного
       tags:
-        - favoriteService
+        - trashService
       responses:
         '200':
           description: Success
@@ -49,19 +49,19 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
-  /favorites/find:
+  /trash/find:
     post:
-      operationId: getFavorites
-      summary: Метод получение всех фигурок в разделе избранное
+      operationId: getTrash
+      summary: Метод получение всех фигурок в корзине
       tags:
-        - favoriteService
+        - trashService
       responses:
         '200':
           description: Success
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/FindFavoritesRequest'
+                $ref: '#/components/schemas/FindTrashRequest'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -91,15 +91,15 @@ components:
           type: string
         message:
           type: string
-    FindFavoritesRequest:
+    FindTrashRequest:
       description: Параметры поиска
       type: object
       properties:
         pageableInfo:
           $ref: '#/components/schemas/PageableInfo'
-        favoriteShortInfo:
-          $ref: '#/components/schemas/ShortFavorite'
-    ShortFavorite:
+        trashShortInfo:
+          $ref: '#/components/schemas/ShortTrash'
+    ShortTrash:
       description: Информация о фигурке
       type: object
       required:

@@ -1,16 +1,16 @@
 openapi: 3.0.3
 info:
-  title: User swagger
+  title: Product swagger
   description: Описание сервиса создания, обновления, получение, данных о 3D моделях
   version: 0.0.1
 servers:
   - url: /api/v1
 paths:
-  /figurine/{figurineId}:
+  /product/{productId}:
     get:
-      operationId: getFigurine
+      operationId: getProduct
       parameters:
-        - name: figurineId
+        - name: productId
           description: Id фигуры
           in: path
           schema:
@@ -20,22 +20,22 @@ paths:
           example: 86f85e4a-0354-4121-9491-51cc1fae14e1
       summary: Метод получения подробных данных о фигуре
       tags:
-        - figurineService
+        - productService
       responses:
         '200':
           description: Success
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Figurine'
+                $ref: '#/components/schemas/Product'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
     put:
-      operationId: updateFigurine
+      operationId: updateProduct
       parameters:
-        - name: figurineId
+        - name: productId
           description: Id фигуры
           in: path
           schema:
@@ -45,13 +45,13 @@ paths:
           example: 86f85e4a-0354-4121-9491-51cc1fae14e1
       summary: Метод обновления данных фигуры
       tags:
-        - figurineService
+        - productService
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Figurine'
+              $ref: '#/components/schemas/Product'
       responses:
         '200':
           description: Success
@@ -59,48 +59,63 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
-  /figurine:
+    delete:
+      operationId: deleteProduct
+      parameters:
+        - name: productId
+          description: Id фигуры
+          in: path
+          schema:
+            type: string
+            format: uuid
+          required: true
+          example: 86f85e4a-0354-4121-9491-51cc1fae14e1
+      summary: Метод удаления фигурки
+      tags:
+        - productService
+      responses:
+        '200':
+          description: Success
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /product:
     post:
-      operationId: createUser
+      operationId: createProduct
       summary: Метод создания фигуры
       tags:
-        - figurineService
+        - productService
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Figurine'
+              $ref: '#/components/schemas/Product'
       responses:
         '200':
           description: Success
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Figurine'
+                $ref: '#/components/schemas/Product'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
-  /fogurine/find:
+  /products/find:
     post:
-      operationId: getFogurines
+      operationId: getProducts
       summary: Метод получение всех фигурок
       tags:
-        - figurineService
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/FindFigurinesRequest'
+        - productService
       responses:
         '200':
           description: Success
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ShortFigurine'
+                $ref: '#/components/schemas/FindProductsRequest'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -130,30 +145,63 @@ components:
           type: string
         message:
           type: string
-    Figurine:
+    Product:
       description: Информация о фигурке
       type: object
       required:
-        - fullName
-        - email
-        - permission
-        - status
+        - name
+        - description
+        - price
+        - amount
+        - createdDate
+        - category
       properties:
+        productId:
+          description: Идентификатор счёта участника
+          x-title: ID продукта
+          type: string
+          format: uuid
         name:
           description: Название фигурки
           type: string
-          example: username@mail.ru
+          example: Монстрик
+        description:
+          description: Описание фигурки
+          type: string
+          example: Большой монстрик
         price:
           description: Цена фигурки
+          type: number
+          format: double
+          example: 200.99
+        amount:
+          description: Колличество фигурок у продавца
           type: integer
-          example: 200
+          example: 10
         tags:
           description: Теги
           items:
             type: string
             format: string
             example: Warhamer
-    ShortFigurine:
+        #        TODO добавить подкатегории
+        category:
+          description: Подкатегория продукта
+          type: string
+          enum:
+            - с1
+            - с2
+            - с3
+          example: с1
+    FindProductsRequest:
+      description: Параметры поиска
+      type: object
+      properties:
+        pageableInfo:
+          $ref: '#/components/schemas/PageableInfo'
+        productShortInfo:
+          $ref: '#/components/schemas/ShortProduct'
+    ShortProduct:
       description: Информация о фигурке
       type: object
       required:
@@ -165,7 +213,7 @@ components:
         name:
           description: Название фигурки
           type: string
-          example: username@mail.ru
+          example: Монстрик
         price:
           description: Цена фигурки
           type: integer
@@ -176,28 +224,18 @@ components:
             type: string
             format: string
             example: '#Warhamer'
-    FindFigurinesRequest:
-      description: Параметры поиска
+    PageableInfo:
+      description: Параметры страницы
       type: object
       properties:
-        requestPreferences:
-          description: Поисковые настройки
-          type: object
-          properties:
-            page:
-              description: >-
-                Номер страницы для отображения. Поскольку все записи не
-                поместятся на фронте - следует делить результат постранично
-              x-title: Номер страницы для отображения
-              type: integer
-              example: '1'
-            recordsAmount:
-              description: Количество записей на одну страницу
-              type: integer
-              example: '20'
-            searchField:
-              description: Поле для поиска элемента
-              type: string
-              example: '#Warhamer'
-
-
+        page:
+          description: >-
+            Номер страницы для отображения. Поскольку все записи не
+            поместятся на фронте - следует делить результат постранично
+          x-title: Номер страницы для отображения
+          type: integer
+          example: '1'
+        recordsAmount:
+          description: Количество записей на одну страницу
+          type: integer
+          example: '20'
