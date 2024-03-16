@@ -111,11 +111,19 @@ components:
       description: Информация о пользователе
       type: object
       required:
+        - userId
         - fullName
         - email
+        - login
         - permission
         - status
+        - registerDate
       properties:
+        userId:
+          description: Идентификатор пользователя
+          type: string
+          format: uuid
+          example: 86f85e1a-0354-4121-9491-51cc1fae14e1
         fullName:
           description: полное имя пользователя
           type: string
@@ -136,3 +144,8 @@ components:
             - locked
             - deleted
           example: active
+        registerDate:
+          type: string
+          format: date-time
+          description: Дата-время регистрации пользователя
+          example: '2023-01-01T12:00:00Z'

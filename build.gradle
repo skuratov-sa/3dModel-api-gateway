@@ -50,13 +50,66 @@ tasks.register('userApiGenerate', GenerateTask) {
     apiPackage = 'ru.itone.cur.gateway.api.account.v1'
 }
 
-tasks.register('figurineApiGenerate', GenerateTask) {
+tasks.register('productApiGenerate', GenerateTask) {
     group 'openapi generation'
     generatorName = 'spring'
     generateModelTests = false
     generateModelDocumentation = false
     outputDir = "$buildDir/generated"
-    inputSpec = "$rootDir/src/main/resources/spec/swagger/figurine/Figurine.yaml"
+    inputSpec = "$rootDir/src/main/resources/spec/swagger/product/Product.yaml"
+
+    configOptions = [
+            interfaceOnly: 'true',
+            reactive     : 'true',
+            dateLibrary  : 'java8',
+            useJakartaEe : 'true'
+    ]
+    modelPackage = 'ru.itone.cur.gateway.api.account.v1.json'
+    apiPackage = 'ru.itone.cur.gateway.api.account.v1'
+}
+
+tasks.register('trashApiGenerate', GenerateTask) {
+    group 'openapi generation'
+    generatorName = 'spring'
+    generateModelTests = false
+    generateModelDocumentation = false
+    outputDir = "$buildDir/generated"
+    inputSpec = "$rootDir/src/main/resources/spec/swagger/trash/Trash.yaml"
+
+    configOptions = [
+            interfaceOnly: 'true',
+            reactive     : 'true',
+            dateLibrary  : 'java8',
+            useJakartaEe : 'true'
+    ]
+    modelPackage = 'ru.itone.cur.gateway.api.account.v1.json'
+    apiPackage = 'ru.itone.cur.gateway.api.account.v1'
+}
+
+tasks.register('favoriteApiGenerate', GenerateTask) {
+    group 'openapi generation'
+    generatorName = 'spring'
+    generateModelTests = false
+    generateModelDocumentation = false
+    outputDir = "$buildDir/generated"
+    inputSpec = "$rootDir/src/main/resources/spec/swagger/favorite/Favorite.yaml"
+
+    configOptions = [
+            interfaceOnly: 'true',
+            reactive     : 'true',
+            dateLibrary  : 'java8',
+            useJakartaEe : 'true'
+    ]
+    modelPackage = 'ru.itone.cur.gateway.api.account.v1.json'
+    apiPackage = 'ru.itone.cur.gateway.api.account.v1'
+}
+tasks.register('categoryApiGenerate', GenerateTask) {
+    group 'openapi generation'
+    generatorName = 'spring'
+    generateModelTests = false
+    generateModelDocumentation = false
+    outputDir = "$buildDir/generated"
+    inputSpec = "$rootDir/src/main/resources/spec/swagger/category/Category.yaml"
 
     configOptions = [
             interfaceOnly: 'true',
@@ -71,7 +124,11 @@ tasks.register('figurineApiGenerate', GenerateTask) {
 
 tasks.register('apiGenerateAll') {
     group 'openapi generation'
-    dependsOn tasks.userApiGenerate, tasks.figurineApiGenerate
+    dependsOn tasks.userApiGenerate,
+            tasks.productApiGenerate,
+            tasks.trashApiGenerate,
+            tasks.favoriteApiGenerate,
+            tasks.categoryApiGenerate
 }
 
 tasks.named('compileJava') {
